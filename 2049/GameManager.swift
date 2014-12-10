@@ -85,7 +85,7 @@ public class GameManager {
     
     // Move a tile and its representation
     func moveTile(tile: Tile, toCell: Position) {
-        grid.cells[tile.position.x, tile.position.y] = NSNull()
+        grid.cells[tile.position.x, tile.position.y] = nil
         grid.cells[toCell.x, toCell.y] = tile
         tile.updatePosition(toCell)
     }

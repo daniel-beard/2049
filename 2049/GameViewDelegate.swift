@@ -9,8 +9,8 @@
 import Foundation
 
 protocol GameViewDelegate: class {
-    func insertTile(tile: Tile)
-    func moveTile(tile: Tile, toPosition: Position)
+//    func insertTile(tile: Tile)
+//    func moveTile(tile: Tile, toPosition: Position)
     func updateViewState(gameViewInfo: GameViewInfo)
 }
 

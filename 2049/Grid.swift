@@ -10,12 +10,12 @@ import Foundation
 
 public class Grid {
     
-    var cells: Array2DTyped<AnyObject>
+    var cells: Array2DTyped<Tile?>
     var size:Int = 0
     
     init(size: Int) {
         self.size = size
-        cells = Array2DTyped(cols: size, rows: size, defaultValue: NSNull())
+        cells = Array2DTyped(cols: size, rows: size, defaultValue: nil)
     }
     
     // Find the first available random position
@@ -33,12 +33,8 @@ public class Grid {
         
         for x in 0..<cells.colCount() {
             for y in 0..<cells.rowCount() {
-                var value: AnyObject = cells[x, y]
-                switch value {
-                case let value as NSNull:
+                if cells[x, y] == nil {
                     availableCells.append(Position(x: x, y: y))
-                default:
-                    break
                 }
             }
         }
@@ -62,21 +58,10 @@ public class Grid {
     }
     
     public func cellContent(cell: Position) -> Tile? {
-        let tile: AnyObject = _cellContent(cell)
-        switch tile {
-        case let tile as Tile:
-            return tile as Tile
-        default:
-            return nil
-        }
-    }
-    
-    func _cellContent(cell: Position) -> AnyObject {
         if withinBounds(cell) {
             return cells[cell.x, cell.y]
-        } else {
-            return NSNull()
         }
+        return nil
     }
     
     // Inserts a tile at its position
@@ -85,7 +70,7 @@ public class Grid {
     }
     
     public func removeTile(tile: Tile) {
-        cells[tile.position.x, tile.position.y] = NSNull()
+        cells[tile.position.x, tile.position.y] = nil
     }
     
     
