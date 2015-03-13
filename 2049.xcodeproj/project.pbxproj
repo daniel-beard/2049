@@ -22,6 +22,7 @@
 		2463ACC21A341841002DDD37 /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2463ACC11A341841002DDD37 /* GameManager.swift */; };
 		2463ACC41A342D81002DDD37 /* Vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2463ACC31A342D81002DDD37 /* Vector.swift */; };
 		2463ACC61A3524B2002DDD37 /* GameViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2463ACC51A3524B2002DDD37 /* GameViewDelegate.swift */; };
+		24C10F3E1A3CCA5D00E45B8D /* Array+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C10F3D1A3CCA5D00E45B8D /* Array+Additions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		2463ACC11A341841002DDD37 /* GameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
 		2463ACC31A342D81002DDD37 /* Vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector.swift; sourceTree = "<group>"; };
 		2463ACC51A3524B2002DDD37 /* GameViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewDelegate.swift; sourceTree = "<group>"; };
+		24C10F3D1A3CCA5D00E45B8D /* Array+Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Additions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,7 +138,7 @@
 		2463ACB71A33EB8F002DDD37 /* GameLogic */ = {
 			isa = PBXGroup;
 			children = (
-				2463ACC01A3410A4002DDD37 /* Types */,
+				2463ACC01A3410A4002DDD37 /* Utils */,
 				2463ACB81A33EB9F002DDD37 /* Grid.swift */,
 				2463ACBC1A33F553002DDD37 /* Tile.swift */,
 				2463ACC11A341841002DDD37 /* GameManager.swift */,
@@ -145,14 +147,15 @@
 			name = GameLogic;
 			sourceTree = "<group>";
 		};
-		2463ACC01A3410A4002DDD37 /* Types */ = {
+		2463ACC01A3410A4002DDD37 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				2463ACBE1A34103D002DDD37 /* Position.swift */,
 				2463ACBA1A33F2B7002DDD37 /* Array2DTyped.swift */,
 				2463ACC31A342D81002DDD37 /* Vector.swift */,
+				24C10F3D1A3CCA5D00E45B8D /* Array+Additions.swift */,
 			);
-			name = Types;
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,6 +266,7 @@
 				2463ACBD1A33F553002DDD37 /* Tile.swift in Sources */,
 				2463ACB91A33EB9F002DDD37 /* Grid.swift in Sources */,
 				2463ACBB1A33F2B7002DDD37 /* Array2DTyped.swift in Sources */,
+				24C10F3E1A3CCA5D00E45B8D /* Array+Additions.swift in Sources */,
 				2463ACBF1A34103D002DDD37 /* Position.swift in Sources */,
 				2453F7271A33E55F009FB91D /* AppDelegate.swift in Sources */,
 				2463ACC61A3524B2002DDD37 /* GameViewDelegate.swift in Sources */,

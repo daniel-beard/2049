@@ -21,7 +21,6 @@ public class GameManager {
     // View delegate
     weak var viewDelegate: GameViewDelegate?
     
-    
     init(size: Int) {
         self.size = size
         

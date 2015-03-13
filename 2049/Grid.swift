@@ -52,9 +52,8 @@ public class Grid {
     public func cellOccupied(cell: Position) -> Bool {
         if let content = cellContent(cell) {
             return true
-        } else {
-            return false
         }
+        return false
     }
     
     public func cellContent(cell: Position) -> Tile? {
