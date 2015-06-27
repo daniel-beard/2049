@@ -66,7 +66,7 @@ public class GameManager {
             let tile = Tile(position: grid.randomAvailableCell()!, value: value)
             grid.insertTile(tile)
             
-            println("inserted random value: \(value) at position: \(tile.position.description())")
+            print("inserted random value: \(value) at position: \(tile.position.description())")
         }
     }
     
@@ -106,7 +106,7 @@ public class GameManager {
         // Traverse the grid in the right direction and move tiles
         for x in traversalsX {
             for y in traversalsY {
-                var cell = Position(x: x, y: y)
+                let cell = Position(x: x, y: y)
                
                 if let tile = grid.cellContent(cell) {
                     let (farthestPosition, nextPosition) = findFarthestPosition(cell, vector: vector)
@@ -115,7 +115,7 @@ public class GameManager {
                     var didMergeTile = false
                     if let next = grid.cellContent(nextPosition) {
                         if (next.value == tile.value && next.mergedFrom == nil) {
-                            var merged = Tile(position: nextPosition, value: tile.value * 2)
+                            let merged = Tile(position: nextPosition, value: tile.value * 2)
                             
                             merged.mergedFrom = (tile, next)
                             
@@ -156,7 +156,7 @@ public class GameManager {
             }
         }
         
-        println("After Move: \(description())")
+        print("After Move: \(description())")
         updateViewState()
     }
     
@@ -171,8 +171,8 @@ public class GameManager {
         }
         
         // Always traverse from the farthest cell in the chosen direction
-        traversalsX = vector.x == 1 ? traversalsX.reverse() : traversalsX
-        traversalsY = vector.y == 1 ? traversalsY.reverse() : traversalsY
+        traversalsX = vector.x == 1 ? Array(traversalsX.reverse()) : traversalsX
+        traversalsY = vector.y == 1 ? Array(traversalsY.reverse()) : traversalsY
         
         return (traversalsX, traversalsY)
     }
@@ -181,7 +181,7 @@ public class GameManager {
         var currentCell = cell
         var previous: Position = Position(x: -1, y: -1)
        
-        do {
+        repeat {
             previous = currentCell
             currentCell = Position(x: previous.x + vector.x, y: previous.y + vector.y)
         } while (grid.withinBounds(currentCell) && grid.cellAvailable(currentCell))
@@ -201,10 +201,8 @@ public class GameManager {
                     for direction in 0..<4 {
                         let vector = Vector.getVector(direction)
                         let cell = Position(x: x + vector.x, y: y + vector.y)
-                        if let other = grid.cellContent(cell) {
-                            if other.value == tile.value {
-                                return true
-                            }
+                        if let other = grid.cellContent(cell) where other.value == tile.value {
+                            return true
                         }
                     }
                 }
@@ -220,7 +218,7 @@ public class GameManager {
         //TODO: Clear the state when the game is over (game over only, not win)
         
         //TODO: Update bestscore
-        var gameViewInfo = GameViewInfo(grid: grid, score: score, bestScore: 0, won: won, terminated: isGameTerminated())
+        let gameViewInfo = GameViewInfo(grid: grid, score: score, bestScore: 0, won: won, terminated: isGameTerminated())
         viewDelegate?.updateViewState(gameViewInfo)
     }
     
