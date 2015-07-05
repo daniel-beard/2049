@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Grid {
+public struct Grid {
     
     var cells: Array2DTyped<Tile?>
     var size:Int = 0
@@ -50,10 +50,7 @@ public class Grid {
     }
     
     public func cellOccupied(cell: Position) -> Bool {
-        if let content = cellContent(cell) {
-            return true
-        }
-        return false
+        return cellContent(cell) != nil
     }
     
     public func cellContent(cell: Position) -> Tile? {
@@ -71,7 +68,6 @@ public class Grid {
     public func removeTile(tile: Tile) {
         cells[tile.position.x, tile.position.y] = nil
     }
-    
     
     public func withinBounds(position: Position) -> Bool {
         return position.x >= 0 && position.x < size &&

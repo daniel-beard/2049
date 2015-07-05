@@ -8,7 +8,14 @@
 
 import Foundation
 
-public class GameManager {
+protocol GameManagerProtocol {
+    func setup()
+    func restart()
+    func isGameTerminated() -> Bool
+    func move(direction: Int)
+}
+
+public class GameManager : GameManagerProtocol {
     
     var size: Int = 0
     var score: Int = 0
@@ -18,30 +25,30 @@ public class GameManager {
     var grid: Grid = Grid(size: 0)
     let startTiles = 2
     
+    // State transitions
+    var previousGameState = Grid(size: 0)
+    var tileTransitions = [PositionTransition]()
+    
     // View delegate
     weak var viewDelegate: GameViewDelegate?
     
-    init(size: Int) {
+    //MARK: Public Methods
+    
+    init(size: Int, viewDelegate: GameViewDelegate?) {
         self.size = size
-        
-        setup()
+        self.viewDelegate = viewDelegate
     }
     
-    func restart() {
-        //TODO: Other stuff goes here
+    public func restart() {
         setup()
     }
-    
-//    func keepPlaying() {
-//        //TODO
-//    }
     
     // Return true if the game is lost, or has won and the user hasn't kept playing
-    func isGameTerminated() -> Bool {
+    public func isGameTerminated() -> Bool {
         return over || (won && !keepPlaying)
     }
     
-    func setup() {
+    public func setup() {
         grid = Grid(size: size)
         score = 0
         over = false
@@ -50,8 +57,92 @@ public class GameManager {
         
         // Add the initial tiles
         addStartTiles()
+        updateViewState()
     }
     
+    // Move tiles on the grid in the specified direction
+    // 0: up, 1: right, 2: down, 3: left
+    func move(direction: Int) {
+        
+        // Store current state
+        previousGameState = grid
+        tileTransitions = [PositionTransition]()
+        
+        if isGameTerminated() {
+            return
+        }
+        
+        let vector = Vector.getVector(direction)
+        let (traversalsX, traversalsY) = buildTraversals(vector)
+        var moved = false
+        
+        // Save the current tile positions and remove merger information
+        prepareTiles()
+        
+        // Traverse the grid in the right direction and move tiles
+        for x in traversalsX {
+            for y in traversalsY {
+                let cell = Position(x: x, y: y)
+                
+                if let tile = grid.cellContent(cell) {
+                    let (farthestPosition, nextPosition) = findFarthestPosition(cell, vector: vector)
+                    
+                    // Only one merger per row traversal?
+                    var didMergeTile = false
+                    if let next = grid.cellContent(nextPosition) {
+                        if (next.value == tile.value && next.mergedFrom == nil) {
+                            let merged = Tile(position: nextPosition, value: tile.value * 2)
+                            
+                            merged.mergedFrom = (tile, next)
+                            
+                            grid.insertTile(merged)
+                            grid.removeTile(tile)
+                            tileTransitions.append(PositionTransition(originalPosition: tile.position, newPosition: merged.position))
+                            
+                            // Converge the two tiles' positions
+                            tile.updatePosition(nextPosition)
+                            
+                            // Update the score
+                            score += merged.value
+                            
+                            didMergeTile = true
+                            
+                            // The mighty 2048 tile
+                            if (merged.value == 2048) {
+                                won = true
+                            }
+                        }
+                    }
+                    
+                    if !didMergeTile {
+                        tileTransitions.append(PositionTransition(originalPosition: tile.position, newPosition: farthestPosition))
+                        moveTile(tile, toCell: farthestPosition)
+                    }
+                    
+                    if cell.equals(tile.position) == false {
+                        moved = true
+                    }
+                }
+            }
+        }
+        
+        if moved {
+            addRandomTile()
+            
+            if !movesAvailable() {
+                over = true // Game over!
+            }
+        }
+        
+        print("After Move: \(description)")
+        updateViewState()
+    }
+    
+
+}
+
+//MARK: Private Methods
+private extension GameManager {
     // Set up the initial tiles to start the game with
     func addStartTiles() {
         for _ in 0..<startTiles {
@@ -89,76 +180,7 @@ public class GameManager {
         tile.updatePosition(toCell)
     }
     
-    // Move tiles on the grid in the specified direction
-    // 0: up, 1: right, 2: down, 3: left
-    func move(direction: Int) {
-        if isGameTerminated() {
-            return
-        }
-        
-        let vector = Vector.getVector(direction)
-        let (traversalsX, traversalsY) = buildTraversals(vector)
-        var moved = false
-        
-        // Save the current tile positions and remove merger information
-        prepareTiles()
-        
-        // Traverse the grid in the right direction and move tiles
-        for x in traversalsX {
-            for y in traversalsY {
-                let cell = Position(x: x, y: y)
-               
-                if let tile = grid.cellContent(cell) {
-                    let (farthestPosition, nextPosition) = findFarthestPosition(cell, vector: vector)
-                    
-                    // Only one merger per row traversal?
-                    var didMergeTile = false
-                    if let next = grid.cellContent(nextPosition) {
-                        if (next.value == tile.value && next.mergedFrom == nil) {
-                            let merged = Tile(position: nextPosition, value: tile.value * 2)
-                            
-                            merged.mergedFrom = (tile, next)
-                            
-                            grid.insertTile(merged)
-                            grid.removeTile(tile)
-                            
-                            // Converge the two tiles' positions
-                            tile.updatePosition(nextPosition)
-                            
-                            // Update the score
-                            score += merged.value
-                            
-                            didMergeTile = true
-                            
-                            // The mighty 2048 tile
-                            if (merged.value == 2048) {
-                                won = true
-                            }
-                        }
-                    }
-                    
-                    if !didMergeTile {
-                        moveTile(tile, toCell: farthestPosition)
-                    }
-                    
-                    if cell.equals(tile.position) == false {
-                        moved = true
-                    }
-                }
-            }
-        }
-        
-        if moved {
-            addRandomTile()
-            
-            if !movesAvailable() {
-                over = true // Game over!
-            }
-        }
-        
-        print("After Move: \(description())")
-        updateViewState()
-    }
+    
     
     // Build a list of positions to traverse in the right order
     func buildTraversals(vector: Vector) -> ([Int], [Int]) {
@@ -180,7 +202,7 @@ public class GameManager {
     func findFarthestPosition(cell: Position, vector: Vector) -> (farthest: Position, next: Position) {
         var currentCell = cell
         var previous: Position = Position(x: -1, y: -1)
-       
+        
         repeat {
             previous = currentCell
             currentCell = Position(x: previous.x + vector.x, y: previous.y + vector.y)
@@ -218,12 +240,15 @@ public class GameManager {
         //TODO: Clear the state when the game is over (game over only, not win)
         
         //TODO: Update bestscore
-        let gameViewInfo = GameViewInfo(grid: grid, score: score, bestScore: 0, won: won, terminated: isGameTerminated())
+        let gameViewInfo = GameViewInfo(grid: grid, score: score, bestScore: 0, won: won, terminated: isGameTerminated(), transitions: tileTransitions)
         viewDelegate?.updateViewState(gameViewInfo)
     }
+}
+
+//MARK: Debug Printable
+extension GameManager : CustomStringConvertible {
     
-    //MARK: Debug methods
-    func description() -> String {
+    public var description: String {
         var result = "\n"
         for row in 0..<size {
             for column in 0..<size {
