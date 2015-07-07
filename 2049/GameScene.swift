@@ -8,6 +8,10 @@
 
 import SpriteKit
 
+func afterDelay(delay: NSTimeInterval, performBlock block:() -> Void) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), block)
+}
+
 class GameScene: SKScene {
     
     // Constants
@@ -17,12 +21,16 @@ class GameScene: SKScene {
     let gridHeight = 100
     let gridSize = 4
     let tileTransitionDuration = 0.5
+    let updateDuration = 0.51
     
-    var gameManager: GameManager!
+    var gameManager: GameManagerProtocol!
     var gameViewInfo: GameViewInfo?
-    var dynamicLabels = [SKLabelNode]()
+    var labelArray: Array2DOptional<SKLabelNode>!
+    var isAnimating = false
     
     override func didMoveToView(view: SKView) {
+        
+        labelArray = Array2DOptional(cols: gridSize, rows: gridSize, defaultValue: nil)
         
         setupGrid()
         gameManager = GameManager(size: gridSize, viewDelegate: self)
@@ -33,6 +41,11 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        if isAnimating {
+            return
+        }
+        
         for touch in touches {
             let location = touch.locationInNode(self)
             let node = nodeAtPoint(location)
@@ -46,9 +59,6 @@ class GameScene: SKScene {
                     gameManager.move(1)
                 case "left":
                     gameManager.move(3)
-//                case "add":
-//                    gameManager.addRandomTile()
-//                    print("\(gameManager.description())") 
                 default:
                     break
                 }
@@ -57,26 +67,16 @@ class GameScene: SKScene {
     }
     
     func setupGrid() {
-
         for x in 0..<gridSize {
             for y in 0..<gridSize {
                 // Setup grid squares
                 let currentPoint = CGPoint(x: x, y: y)
                 let currentRect = gridElementRectForPoint(currentPoint)
-                let centerPosition = gridLabelPositionForPoint(currentPoint)
                 let shapeNode = SKShapeNode(rect: currentRect)
                 shapeNode.fillColor = .whiteColor()
                 shapeNode.strokeColor = .blackColor()
                 shapeNode.lineWidth = 2
                 self.addChild(shapeNode)
-               
-                // Set up static labels
-                let labelNode = SKLabelNode(text: "")
-                decorateLabel(labelNode)
-                labelNode.position = centerPosition
-                labelNode.name = "\(x)\(y)"
-                print(labelNode.name)
-                self.addChild(labelNode)
             }
         }
     }
@@ -100,27 +100,28 @@ class GameScene: SKScene {
 extension GameScene : GameViewDelegate {
     
     func updateViewState(gameViewInfo: GameViewInfo) {
+        isAnimating = true
         
         self.gameViewInfo = gameViewInfo
         
-        // Psuedo code for animations:
-        /**
-        - Hide all the static labels
-        - Create new movable labels over the top.
-        - Calculate position diffs and move new labels to the right positions
-        - Hide movable labels
-        - Show static labels.
-        
-        */
-        
-        updateStaticLabels()
-
-        // Create new dynamic labels over the top
-        createDynamicLabels(fromTransitions: gameViewInfo.positionTransitions)
-        
+        for transition in gameViewInfo.positionTransitions where transition.type == .Moved {
+            moveLabel(transition)
+        }
         
         print(gameViewInfo.positionTransitions)
         
+        afterDelay(updateDuration, performBlock: {
+            self.updateLabels()
+            self.isAnimating = false
+        })
+    }
+    
+    func moveLabel(transition: PositionTransition) {
+        guard let labelNode = labelArray[transition.start.x, transition.start.y] else {
+            return
+        }
+        let endPosition = gridLabelPositionForPoint(CGPoint(x: transition.end.x, y: transition.end.y))
+        labelNode.runAction(SKAction.moveTo(endPosition, duration: tileTransitionDuration))
     }
 }
 
@@ -132,84 +133,24 @@ extension GameScene {
         label.fontSize = 32
     }
     
-    func staticLableNodeAtGridPoint(point: CGPoint) -> SKLabelNode? {
-        let labelName = "\(Int(point.x))\(Int(point.y))"
-        return self.childNodeWithName(labelName) as? SKLabelNode
-    }
-    
-    func updateStaticLabels() {
+    func updateLabels() {
         for x in 0..<gridSize {
             for y in 0..<gridSize {
-                var text = ""
+                // If we have an existing label, remove it
+                if let labelNode = labelArray[x, y] {
+                    labelNode.removeFromParent()
+                }
+                labelArray[x, y] = nil
+                
+                // If we have content, add a new label
                 if let content = gameViewInfo?.grid.cellContent(Position(x: x, y: y)) {
-                    text = "\(content.value)"
-                }
-                if let labelNode = staticLableNodeAtGridPoint(CGPoint(x: x, y: y)) {
-                    labelNode.text = text
-                }
-            }
-        }
-    }
-    
-    func setStaticLabelAlpha(alpha: CGFloat) {
-        for x in 0..<gridSize {
-            for y in 0..<gridSize {
-                if let labelNode = staticLableNodeAtGridPoint(CGPoint(x: x, y: y)) {
-                    labelNode.alpha = alpha
+                    let labelNode = SKLabelNode(text: "\(content.value)")
+                    labelNode.position = gridLabelPositionForPoint(CGPoint(x: x, y: y))
+                    decorateLabel(labelNode)
+                    labelArray[x, y] = labelNode
+                    self.addChild(labelNode)
                 }
             }
         }
     }
-}
-
-//MARK: Dynamic Label Extension
-extension GameScene {
-    func createDynamicLabels(fromTransitions transitions: [PositionTransition]) {
-        self.dynamicLabels = [SKLabelNode]()
-        
-//        if transitions.count > 0 {
-//            setStaticLabelAlpha(0)
-//        }
-        
-        var didRunAnimations = false
-        var animations = 0
-        
-        for transition in transitions {
-           
-            let startPoint = CGPoint(x: transition.originalPosition.x, y: transition.originalPosition.y)
-            guard let staticLabel = staticLableNodeAtGridPoint(startPoint) else {
-                continue
-            }
-            
-            
-            let startingGridPosition = gridLabelPositionForPoint(CGPoint(x: transition.originalPosition.x, y: transition.originalPosition.y))
-            let endGridPosition = gridLabelPositionForPoint(CGPoint(x: transition.newPosition.x, y: transition.newPosition.y))
-            let labelNode = SKLabelNode(text: staticLabel.text)
-            decorateLabel(labelNode)
-            labelNode.position = startingGridPosition
-            self.addChild(labelNode)
-            self.dynamicLabels.append(labelNode)
-            
-            didRunAnimations = true
-            
-            animations++
-            labelNode.runAction(SKAction.moveTo(endGridPosition, duration: tileTransitionDuration), completion: {
-                //self.cleanupDynamicLabels()
-            })
-        }
-        if !didRunAnimations {
-//            cleanupDynamicLabels()
-        }
-        print("Animations: \(animations)")
-    }
-    
-    func cleanupDynamicLabel(labelNode: SKLabelNode) {
-        labelNode.removeFromParent()
-        dynamicLabels.removeAtIndex(dynamicLabels.indexOf(labelNode)!)
-        
-//        self.removeChildrenInArray(dynamicLabels)
-//        updateStaticLabels()
-//        setStaticLabelAlpha(1)
-    }
-
 }

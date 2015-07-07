@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol GameManagerProtocol {
+protocol GameManagerProtocol : CustomStringConvertible {
     func setup()
     func restart()
     func isGameTerminated() -> Bool
@@ -97,7 +97,7 @@ public class GameManager : GameManagerProtocol {
                             
                             grid.insertTile(merged)
                             grid.removeTile(tile)
-                            tileTransitions.append(PositionTransition(originalPosition: tile.position, newPosition: merged.position))
+                            tileTransitions.append(PositionTransition(start: merged.position, end: merged.position, type: .Removed))
                             
                             // Converge the two tiles' positions
                             tile.updatePosition(nextPosition)
@@ -115,12 +115,16 @@ public class GameManager : GameManagerProtocol {
                     }
                     
                     if !didMergeTile {
-                        tileTransitions.append(PositionTransition(originalPosition: tile.position, newPosition: farthestPosition))
                         moveTile(tile, toCell: farthestPosition)
                     }
                     
+                    // Tile moved
                     if cell.equals(tile.position) == false {
                         moved = true
+                    }
+                    
+                    if moved && tile.mergedFrom == nil {
+                        tileTransitions.append(PositionTransition(start: cell, end: tile.position, type: .Moved))
                     }
                 }
             }
@@ -138,17 +142,8 @@ public class GameManager : GameManagerProtocol {
         updateViewState()
     }
     
-
-}
-
-//MARK: Private Methods
-private extension GameManager {
-    // Set up the initial tiles to start the game with
-    func addStartTiles() {
-        for _ in 0..<startTiles {
-            addRandomTile()
-        }
-    }
+    
+    //MARK: Internal Methods
     
     // Adds a tile in a random position
     func addRandomTile() {
@@ -157,7 +152,20 @@ private extension GameManager {
             let tile = Tile(position: grid.randomAvailableCell()!, value: value)
             grid.insertTile(tile)
             
+            tileTransitions.append(PositionTransition(start: tile.position, end: tile.position, type: .Added))
+            
             print("inserted random value: \(value) at position: \(tile.position.description())")
+        }
+    }
+
+}
+
+//MARK: Private Methods
+internal extension GameManager {
+    // Set up the initial tiles to start the game with
+    func addStartTiles() {
+        for _ in 0..<startTiles {
+            addRandomTile()
         }
     }
     
@@ -236,10 +244,6 @@ private extension GameManager {
     //MARK: View Delegate
     func updateViewState() {
         //TODO: Update best score
-        
-        //TODO: Clear the state when the game is over (game over only, not win)
-        
-        //TODO: Update bestscore
         let gameViewInfo = GameViewInfo(grid: grid, score: score, bestScore: 0, won: won, terminated: isGameTerminated(), transitions: tileTransitions)
         viewDelegate?.updateViewState(gameViewInfo)
     }

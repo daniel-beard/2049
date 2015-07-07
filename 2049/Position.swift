@@ -36,15 +36,27 @@ func == (left: Position, right: Position) -> Bool {
     return left.x == right.x && left.y == right.y
 }
 
-public struct PositionTransition : CustomStringConvertible, CustomDebugStringConvertible {
-    let originalPosition: Position
-    let newPosition: Position
+public enum TransitionType: String {
+    case Unknown = "Unknown"
+    case Moved = "Moved"
+    case Added = "Added"
+    case Removed = "Removed"
+}
+
+public struct PositionTransition : CustomStringConvertible, CustomDebugStringConvertible, Equatable {
+    let start: Position
+    let end: Position
+    let type: TransitionType
     
     public var description: String {
-        return "(\(originalPosition.x), \(originalPosition.y)) -> (\(newPosition.x), \(newPosition.y))\n"
+        return "(\(start.x), \(start.y)) -> (\(end.x), \(end.y)) type: \(type.rawValue)\n"
     }
     
     public var debugDescription: String {
         return description
     }
+}
+
+public func == (left: PositionTransition, right: PositionTransition) -> Bool {
+    return (left.start.x == right.start.x && left.end.y == right.end.y);
 }
