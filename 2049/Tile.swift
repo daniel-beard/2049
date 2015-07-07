@@ -28,9 +28,4 @@ public class Tile {
         self.position.x = position.x
         self.position.y = position.y
     }
-   
-    // TODO:
-//    public func serialize() {
-//        
-//    }
 }

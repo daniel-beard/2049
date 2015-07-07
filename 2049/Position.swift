@@ -8,9 +8,7 @@
 
 import Foundation
 
-
-
-public class Position {
+public struct Position {
     var x = 0
     var y = 0
     
@@ -36,4 +34,29 @@ public class Position {
 //MARK: Custom operators
 func == (left: Position, right: Position) -> Bool {
     return left.x == right.x && left.y == right.y
+}
+
+public enum TransitionType: String {
+    case Unknown = "Unknown"
+    case Moved = "Moved"
+    case Added = "Added"
+    case Removed = "Removed"
+}
+
+public struct PositionTransition : CustomStringConvertible, CustomDebugStringConvertible, Equatable {
+    let start: Position
+    let end: Position
+    let type: TransitionType
+    
+    public var description: String {
+        return "(\(start.x), \(start.y)) -> (\(end.x), \(end.y)) type: \(type.rawValue)\n"
+    }
+    
+    public var debugDescription: String {
+        return description
+    }
+}
+
+public func == (left: PositionTransition, right: PositionTransition) -> Bool {
+    return (left.start.x == right.start.x && left.end.y == right.end.y);
 }

@@ -20,12 +20,14 @@ public class GameViewInfo {
     var bestScore: Int
     var won: Bool
     var terminated: Bool
+    var positionTransitions = [PositionTransition]()
     
-    init(grid: Grid, score: Int, bestScore: Int, won: Bool, terminated: Bool) {
+    init(grid: Grid, score: Int, bestScore: Int, won: Bool, terminated: Bool, transitions: [PositionTransition]) {
         self.grid = grid
         self.score = score
         self.bestScore = bestScore
         self.won = won
         self.terminated = terminated
+        self.positionTransitions = transitions
     }
 }
