@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Array2DTyped<T> {
+class Array2DTyped<T> : SequenceType, GeneratorType {
     
     var cols:Int, rows:Int
     var matrix:[T]
@@ -34,5 +34,25 @@ class Array2DTyped<T> {
     
     func rowCount() -> Int {
         return self.rows
+    }
+    
+    //MARK: GeneratorType
+    
+    var currentElement = 0
+    func next() -> T? {
+        if currentElement < matrix.count {
+            let curItem = currentElement
+            currentElement++
+            return matrix[curItem]
+        }
+        return nil
+    }
+    
+    //MARK: SequenceType
+    
+    typealias Generator = Array2DTyped
+    
+    func generate() -> Generator {
+        return self
     }
 }

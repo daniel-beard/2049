@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		243375441B49F9F6004CA552 /* Array2DOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243375431B49F9F6004CA552 /* Array2DOptional.swift */; };
 		2453F7271A33E55F009FB91D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2453F7261A33E55F009FB91D /* AppDelegate.swift */; };
 		2453F7291A33E55F009FB91D /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2453F7281A33E55F009FB91D /* GameScene.sks */; };
 		2453F72B1A33E55F009FB91D /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2453F72A1A33E55F009FB91D /* GameScene.swift */; };
@@ -24,7 +23,6 @@
 		2463ACC21A341841002DDD37 /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2463ACC11A341841002DDD37 /* GameManager.swift */; };
 		2463ACC41A342D81002DDD37 /* Vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2463ACC31A342D81002DDD37 /* Vector.swift */; };
 		2463ACC61A3524B2002DDD37 /* GameViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2463ACC51A3524B2002DDD37 /* GameViewDelegate.swift */; };
-		24C10F3E1A3CCA5D00E45B8D /* Array+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C10F3D1A3CCA5D00E45B8D /* Array+Additions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +36,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		243375431B49F9F6004CA552 /* Array2DOptional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array2DOptional.swift; sourceTree = "<group>"; };
 		2453F7211A33E55F009FB91D /* 2049.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 2049.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2453F7251A33E55F009FB91D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2453F7261A33E55F009FB91D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -59,7 +56,6 @@
 		2463ACC11A341841002DDD37 /* GameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
 		2463ACC31A342D81002DDD37 /* Vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector.swift; sourceTree = "<group>"; };
 		2463ACC51A3524B2002DDD37 /* GameViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewDelegate.swift; sourceTree = "<group>"; };
-		24C10F3D1A3CCA5D00E45B8D /* Array+Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Additions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,9 +153,7 @@
 			children = (
 				2463ACBE1A34103D002DDD37 /* Position.swift */,
 				2463ACBA1A33F2B7002DDD37 /* Array2DTyped.swift */,
-				243375431B49F9F6004CA552 /* Array2DOptional.swift */,
 				2463ACC31A342D81002DDD37 /* Vector.swift */,
-				24C10F3D1A3CCA5D00E45B8D /* Array+Additions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -274,7 +268,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				243375441B49F9F6004CA552 /* Array2DOptional.swift in Sources */,
 				2453F72B1A33E55F009FB91D /* GameScene.swift in Sources */,
 				2463ACC21A341841002DDD37 /* GameManager.swift in Sources */,
 				24568D911B49E466007B72D8 /* DeterminateGameManager.swift in Sources */,
@@ -283,7 +276,6 @@
 				2463ACBD1A33F553002DDD37 /* Tile.swift in Sources */,
 				2463ACB91A33EB9F002DDD37 /* Grid.swift in Sources */,
 				2463ACBB1A33F2B7002DDD37 /* Array2DTyped.swift in Sources */,
-				24C10F3E1A3CCA5D00E45B8D /* Array+Additions.swift in Sources */,
 				2463ACBF1A34103D002DDD37 /* Position.swift in Sources */,
 				2453F7271A33E55F009FB91D /* AppDelegate.swift in Sources */,
 				2463ACC61A3524B2002DDD37 /* GameViewDelegate.swift in Sources */,

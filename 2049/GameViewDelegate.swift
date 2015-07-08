@@ -9,23 +9,19 @@
 import Foundation
 
 protocol GameViewDelegate: class {
-//    func insertTile(tile: Tile)
-//    func moveTile(tile: Tile, toPosition: Position)
     func updateViewState(gameViewInfo: GameViewInfo)
 }
 
 public class GameViewInfo {
     var grid: Grid
     var score: Int
-    var bestScore: Int
     var won: Bool
     var terminated: Bool
     var positionTransitions = [PositionTransition]()
     
-    init(grid: Grid, score: Int, bestScore: Int, won: Bool, terminated: Bool, transitions: [PositionTransition]) {
+    init(grid: Grid, score: Int, won: Bool, terminated: Bool, transitions: [PositionTransition]) {
         self.grid = grid
         self.score = score
-        self.bestScore = bestScore
         self.won = won
         self.terminated = terminated
         self.positionTransitions = transitions

@@ -23,21 +23,19 @@ class GameScene: SKScene {
     let tileTransitionDuration = 0.5
     let updateDuration = 0.51
     
+    // Variables
     var gameManager: GameManagerProtocol!
     var gameViewInfo: GameViewInfo?
-    var labelArray: Array2DOptional<SKLabelNode>!
+    var labelArray: Array2DTyped<SKLabelNode?>!
     var isAnimating = false
     
     override func didMoveToView(view: SKView) {
         
-        labelArray = Array2DOptional(cols: gridSize, rows: gridSize, defaultValue: nil)
-        
-        setupGrid()
+        labelArray = Array2DTyped(cols: gridSize, rows: gridSize, defaultValue: nil)
         gameManager = GameManager(size: gridSize, viewDelegate: self)
+        setupGrid()
         gameManager.restart()
-        
         print("\(gameManager.description)")
-        
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -67,17 +65,15 @@ class GameScene: SKScene {
     }
     
     func setupGrid() {
-        for x in 0..<gridSize {
-            for y in 0..<gridSize {
-                // Setup grid squares
-                let currentPoint = CGPoint(x: x, y: y)
-                let currentRect = gridElementRectForPoint(currentPoint)
-                let shapeNode = SKShapeNode(rect: currentRect)
-                shapeNode.fillColor = .whiteColor()
-                shapeNode.strokeColor = .blackColor()
-                shapeNode.lineWidth = 2
-                self.addChild(shapeNode)
-            }
+        for (x, y) in gameManager.grid.gridIndexes() {
+            // Setup grid squares
+            let currentPoint = CGPoint(x: x, y: y)
+            let currentRect = gridElementRectForPoint(currentPoint)
+            let shapeNode = SKShapeNode(rect: currentRect)
+            shapeNode.fillColor = .whiteColor()
+            shapeNode.strokeColor = .blackColor()
+            shapeNode.lineWidth = 2
+            self.addChild(shapeNode)
         }
     }
     
@@ -104,12 +100,14 @@ extension GameScene : GameViewDelegate {
         
         self.gameViewInfo = gameViewInfo
         
+        // Animate moving labels
         for transition in gameViewInfo.positionTransitions where transition.type == .Moved {
             moveLabel(transition)
         }
         
         print(gameViewInfo.positionTransitions)
         
+        // Update static labels
         afterDelay(updateDuration, performBlock: {
             self.updateLabels()
             self.isAnimating = false
@@ -134,22 +132,20 @@ extension GameScene {
     }
     
     func updateLabels() {
-        for x in 0..<gridSize {
-            for y in 0..<gridSize {
-                // If we have an existing label, remove it
-                if let labelNode = labelArray[x, y] {
-                    labelNode.removeFromParent()
-                }
-                labelArray[x, y] = nil
-                
-                // If we have content, add a new label
-                if let content = gameViewInfo?.grid.cellContent(Position(x: x, y: y)) {
-                    let labelNode = SKLabelNode(text: "\(content.value)")
-                    labelNode.position = gridLabelPositionForPoint(CGPoint(x: x, y: y))
-                    decorateLabel(labelNode)
-                    labelArray[x, y] = labelNode
-                    self.addChild(labelNode)
-                }
+        for (x, y) in gameManager.grid.gridIndexes() {
+            // If we have an existing label, remove it
+            if let labelNode = labelArray[x, y] {
+                labelNode.removeFromParent()
+            }
+            labelArray[x, y] = nil
+            
+            // If we have content, add a new label
+            if let content = gameViewInfo?.grid.cellContent(Position(x: x, y: y)) {
+                let labelNode = SKLabelNode(text: "\(content.value)")
+                labelNode.position = gridLabelPositionForPoint(CGPoint(x: x, y: y))
+                decorateLabel(labelNode)
+                labelArray[x, y] = labelNode
+                self.addChild(labelNode)
             }
         }
     }

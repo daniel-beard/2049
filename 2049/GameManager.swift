@@ -13,6 +13,8 @@ protocol GameManagerProtocol : CustomStringConvertible {
     func restart()
     func isGameTerminated() -> Bool
     func move(direction: Int)
+    
+    var grid: Grid { get }
 }
 
 public class GameManager : GameManagerProtocol {
@@ -37,6 +39,7 @@ public class GameManager : GameManagerProtocol {
     init(size: Int, viewDelegate: GameViewDelegate?) {
         self.size = size
         self.viewDelegate = viewDelegate
+        grid = Grid(size: size)
     }
     
     public func restart() {
@@ -244,7 +247,7 @@ internal extension GameManager {
     //MARK: View Delegate
     func updateViewState() {
         //TODO: Update best score
-        let gameViewInfo = GameViewInfo(grid: grid, score: score, bestScore: 0, won: won, terminated: isGameTerminated(), transitions: tileTransitions)
+        let gameViewInfo = GameViewInfo(grid: grid, score: score, won: won, terminated: isGameTerminated(), transitions: tileTransitions)
         viewDelegate?.updateViewState(gameViewInfo)
     }
 }

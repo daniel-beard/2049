@@ -13,7 +13,7 @@ public class Tile {
     var position: Position
     var value: Int
     var previousPosition: Position?
-    var mergedFrom: (Tile, Tile)? // Tracks tiles that merged together
+    var mergedFrom: (Tile, Tile)? // Tracks tiles that merged together, TODO: Mark this as indirect when that keyword is available... (and change to struct).
     
     init(position: Position, value: Int) {
         self.position = position
