@@ -28,6 +28,8 @@ class GameScene: SKScene {
     var gameViewInfo: GameViewInfo?
     var labelArray: Array2DTyped<SKLabelNode?>!
     var isAnimating = false
+    var scoreLabel: SKLabelNode!
+    var highScoreLabel: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
         
@@ -75,6 +77,19 @@ class GameScene: SKScene {
             shapeNode.lineWidth = 2
             self.addChild(shapeNode)
         }
+        
+        scoreLabel = SKLabelNode(text: "Score: 0")
+        scoreLabel.fontColor = .whiteColor()
+        scoreLabel.fontSize = 32
+        scoreLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: gridLabelPositionForPoint(CGPoint(x: 0, y: gridSize)).y + 10)
+        self.addChild(scoreLabel)
+        
+        highScoreLabel = SKLabelNode(text: "High Score: \(HighScoreManager.currentHighScore())")
+        highScoreLabel.fontColor = .whiteColor()
+        highScoreLabel.fontSize = 32
+        let highScorePosition = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - 35)
+        highScoreLabel.position = highScorePosition
+        self.addChild(highScoreLabel)
     }
     
     // Returns a CGPoint for a label in the grid given an input point.
@@ -100,6 +115,13 @@ extension GameScene : GameViewDelegate {
         
         self.gameViewInfo = gameViewInfo
         
+        // Update high score
+        if self.gameViewInfo?.terminated ?? false {
+            HighScoreManager.updateHighScoreIfNeeded(self.gameViewInfo?.score ?? 0)
+            
+            //TODODB: Create restart game overlay here...
+        }
+        
         // Animate moving labels
         for transition in gameViewInfo.positionTransitions where transition.type == .Moved {
             moveLabel(transition)
@@ -111,6 +133,7 @@ extension GameScene : GameViewDelegate {
         afterDelay(updateDuration, performBlock: {
             self.updateLabels()
             self.isAnimating = false
+            self.updateScore(self.gameViewInfo?.score ?? 0)
         })
     }
     
@@ -120,6 +143,10 @@ extension GameScene : GameViewDelegate {
         }
         let endPosition = gridLabelPositionForPoint(CGPoint(x: transition.end.x, y: transition.end.y))
         labelNode.runAction(SKAction.moveTo(endPosition, duration: tileTransitionDuration))
+    }
+    
+    func updateScore(newScore: Int) {
+        scoreLabel.text = "Score: \(newScore)"
     }
 }
 

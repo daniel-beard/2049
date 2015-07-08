@@ -135,10 +135,10 @@ public class GameManager : GameManagerProtocol {
         
         if moved {
             addRandomTile()
-            
-            if !movesAvailable() {
-                over = true // Game over!
-            }
+        }
+        
+        if !movesAvailable() {
+            over = true // Game over!
         }
         
         print("After Move: \(description)")
