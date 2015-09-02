@@ -20,8 +20,8 @@ class GameScene: SKScene {
     let gridWidth = 100
     let gridHeight = 100
     let gridSize = 4
-    let tileTransitionDuration = 0.5
-    let updateDuration = 0.51
+    let tileTransitionDuration = 0.3
+    let updateDuration = 0.31
     
     // Variables
     var gameManager: GameManagerProtocol!
@@ -32,7 +32,7 @@ class GameScene: SKScene {
     var highScoreLabel: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
-        
+        super.didMoveToView(view)
         labelArray = Array2DTyped(cols: gridSize, rows: gridSize, defaultValue: nil)
         gameManager = GameManager(size: gridSize, viewDelegate: self)
         setupGrid()
