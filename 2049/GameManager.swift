@@ -227,7 +227,7 @@ internal extension GameManager {
     }
     
     // Check for available matches between tiles (more expensive check)
-    func tileMatchesAvailable()->Bool {             
+    func tileMatchesAvailable()->Bool {
         for x in 0..<size {
             for y in 0..<size {
                 if let tile = grid.cellContent(Position(x: x, y: y)) {
@@ -253,7 +253,7 @@ internal extension GameManager {
 }
 
 //MARK: Debug Printable
-extension GameManager : CustomStringConvertible {
+extension GameManager : CustomStringConvertible {             
     
     public var description: String {
         var result = "\n"
