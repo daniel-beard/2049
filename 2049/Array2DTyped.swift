@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Array2DTyped<T> : SequenceType, GeneratorType {
+class Array2DTyped<T> : Sequence, IteratorProtocol {
     
     var cols:Int, rows:Int
     var matrix:[T]
@@ -16,7 +16,7 @@ class Array2DTyped<T> : SequenceType, GeneratorType {
     init(cols:Int, rows:Int, defaultValue:T) {
         self.cols = cols
         self.rows = rows
-        matrix = Array(count:cols*rows, repeatedValue:defaultValue)
+        matrix = Array(repeating: defaultValue, count: cols*rows)
     }
     
     subscript(col:Int, row:Int) -> T {
@@ -42,7 +42,7 @@ class Array2DTyped<T> : SequenceType, GeneratorType {
     func next() -> T? {
         if currentElement < matrix.count {
             let curItem = currentElement
-            currentElement++
+            currentElement += 1
             return matrix[curItem]
         }
         return nil
@@ -50,9 +50,9 @@ class Array2DTyped<T> : SequenceType, GeneratorType {
     
     //MARK: SequenceType
     
-    typealias Generator = Array2DTyped
+    typealias Iterator = Array2DTyped
     
-    func generate() -> Generator {
+    func makeIterator() -> Iterator {
         return self
     }
 }

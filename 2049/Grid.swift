@@ -45,15 +45,15 @@ public struct Grid {
         return availableCells().count > 0
     }
     
-    public func cellAvailable(cell: Position) -> Bool {
+    public func cellAvailable(_ cell: Position) -> Bool {
         return !cellOccupied(cell)
     }
     
-    public func cellOccupied(cell: Position) -> Bool {
+    public func cellOccupied(_ cell: Position) -> Bool {
         return cellContent(cell) != nil
     }
     
-    public func cellContent(cell: Position) -> Tile? {
+    public func cellContent(_ cell: Position) -> Tile? {
         if withinBounds(cell) {
             return cells[cell.x, cell.y]
         }
@@ -61,15 +61,15 @@ public struct Grid {
     }
     
     // Inserts a tile at its position
-    public func insertTile(tile: Tile) {
+    public func insertTile(_ tile: Tile) {
         cells[tile.position.x, tile.position.y] = tile
     }
     
-    public func removeTile(tile: Tile) {
+    public func removeTile(_ tile: Tile) {
         cells[tile.position.x, tile.position.y] = nil
     }
     
-    public func withinBounds(position: Position) -> Bool {
+    public func withinBounds(_ position: Position) -> Bool {
         return position.x >= 0 && position.x < size &&
             position.y >= 0 && position.y < size;
     }

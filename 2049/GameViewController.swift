@@ -10,13 +10,13 @@ import UIKit
 import SpriteKit
 
 extension SKNode {
-    class func unarchiveFromFile(file : NSString) -> SKNode? {
-        if let path = NSBundle.mainBundle().pathForResource(file as String, ofType: "sks") {
-            let sceneData = try! NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe)
-            let archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
+    class func unarchiveFromFile(_ file : NSString) -> SKNode? {
+        if let path = Bundle.main().pathForResource(file as String, ofType: "sks") {
+            let sceneData = try! Data(contentsOf: URL(fileURLWithPath: path), options: .dataReadingMappedIfSafe)
+            let archiver = NSKeyedUnarchiver(forReadingWith: sceneData)
             
             archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
-            let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as! GameScene
+            let scene = archiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! GameScene
             archiver.finishDecoding()
             return scene
         } else {
@@ -26,6 +26,8 @@ extension SKNode {
 }
 
 class GameViewController: UIViewController {
+
+    var scene: GameScene?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,9 +42,11 @@ class GameViewController: UIViewController {
             skView.ignoresSiblingOrder = true
             
             /* Set the scale mode to scale to fit the window */
-            scene.scaleMode = .AspectFill
+            scene.scaleMode = .aspectFill
             
             skView.presentScene(scene)
+
+            self.scene = scene
         }
     }
 
@@ -51,14 +55,45 @@ class GameViewController: UIViewController {
     }
 
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return UIInterfaceOrientationMask.AllButUpsideDown
+        if UIDevice.current().userInterfaceIdiom == .phone {
+            return UIInterfaceOrientationMask.allButUpsideDown
         } else {
-            return UIInterfaceOrientationMask.All
+            return UIInterfaceOrientationMask.all
         }
     }
 
     override func prefersStatusBarHidden() -> Bool {
         return true
+    }
+}
+
+//MARK: Keyboard shortcuts
+extension GameViewController {
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+
+    override var keyCommands: [UIKeyCommand]? {
+        return [
+            UIKeyCommand(input: UIKeyInputUpArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
+            UIKeyCommand(input: UIKeyInputDownArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
+            UIKeyCommand(input: UIKeyInputLeftArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
+            UIKeyCommand(input: UIKeyInputRightArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
+        ]
+    }
+
+    func handleKeyCommand(_ keyCommand: UIKeyCommand) {
+        switch keyCommand.input {
+        case UIKeyInputUpArrow:
+            scene?.gameManager.move(0)
+        case UIKeyInputDownArrow:
+            scene?.gameManager.move(2)
+        case UIKeyInputRightArrow:
+            scene?.gameManager.move(1)
+        case UIKeyInputLeftArrow:
+            scene?.gameManager.move(3)
+        default:
+            break
+        }
     }
 }

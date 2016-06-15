@@ -27,7 +27,7 @@ public class DeterminateGameManager : GameManager {
         if nonRandomTiles.count > 0 {
             let tile = nonRandomTiles.first!
             grid.insertTile(tile)
-            nonRandomTiles.removeAtIndex(0)
+            nonRandomTiles.remove(at: 0)
             tileTransitions.append(PositionTransition(start: tile.position, end: tile.position, type: .Added))
         }
     }

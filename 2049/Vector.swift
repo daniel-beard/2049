@@ -17,7 +17,7 @@ public class Vector {
         self.y = y
     }
     
-    public class func getVector(direction: Int) -> Vector {
+    public class func getVector(_ direction: Int) -> Vector {
         var map: [Int: Vector] = [
             0: Vector(x: 0, y: -1), // Up
             1: Vector(x: 1, y: 0),  // Right

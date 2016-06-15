@@ -8,8 +8,9 @@
 
 import SpriteKit
 
-func afterDelay(delay: NSTimeInterval, performBlock block:() -> Void) {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), block)
+func afterDelay(_ delay: TimeInterval, performBlock block:() -> Void) {
+    let dispatchTime = DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+    DispatchQueue.main.after(when: dispatchTime, execute: block)
 }
 
 class GameScene: SKScene {
@@ -31,7 +32,7 @@ class GameScene: SKScene {
     var scoreLabel: SKLabelNode!
     var highScoreLabel: SKLabelNode!
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         
         labelArray = Array2DTyped(cols: gridSize, rows: gridSize, defaultValue: nil)
         gameManager = GameManager(size: gridSize, viewDelegate: self)
@@ -40,15 +41,59 @@ class GameScene: SKScene {
         print("\(gameManager.description)")
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    func setupGrid() {
+        for (x, y) in gameManager.grid.gridIndexes() {
+            // Setup grid squares
+            let currentPoint = CGPoint(x: x, y: y)
+            let currentRect = gridElementRectForPoint(currentPoint)
+            let shapeNode = SKShapeNode(rect: currentRect)
+            shapeNode.fillColor = .white()
+            shapeNode.strokeColor = .black()
+            shapeNode.lineWidth = 2
+            self.addChild(shapeNode)
+        }
         
+        scoreLabel = SKLabelNode(text: "Score: 0")
+        scoreLabel.fontColor = .white()
+        scoreLabel.fontSize = 32
+        scoreLabel.position = CGPoint(x: self.frame.midX, y: gridLabelPositionForPoint(CGPoint(x: 0, y: gridSize)).y + 10)
+        self.addChild(scoreLabel)
+        
+        highScoreLabel = SKLabelNode(text: "High Score: \(HighScoreManager.currentHighScore())")
+        highScoreLabel.fontColor = .white()
+        highScoreLabel.fontSize = 32
+        let highScorePosition = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - 35)
+        highScoreLabel.position = highScorePosition
+        self.addChild(highScoreLabel)
+    }
+    
+    // Returns a CGPoint for a label in the grid given an input point.
+    // E.g. (0,0) returns -> TODODB:
+    func gridLabelPositionForPoint(_ point: CGPoint) -> CGPoint {
+        let gridElementRect = gridElementRectForPoint(point)
+        let centerPosition = CGPoint(x: gridElementRect.midX, y: gridElementRect.midY)
+        return centerPosition
+    }
+    
+    func gridElementRectForPoint(_ point: CGPoint) -> CGRect {
+        let x = gridStartX + (gridWidth * Int(point.x))
+        let y = gridStartY - (gridHeight * Int(point.y))
+        return CGRect(x: x, y: y, width: gridWidth, height: gridHeight)
+    }
+}
+
+//MARK: Movement commands
+extension GameScene {
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+
         if isAnimating {
             return
         }
-        
+
         for touch in touches {
-            let location = touch.locationInNode(self)
-            let node = nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let node = atPoint(location)
             if let nodeName = node.name {
                 switch nodeName {
                 case "up":
@@ -65,52 +110,12 @@ class GameScene: SKScene {
             }
         }
     }
-    
-    func setupGrid() {
-        for (x, y) in gameManager.grid.gridIndexes() {
-            // Setup grid squares
-            let currentPoint = CGPoint(x: x, y: y)
-            let currentRect = gridElementRectForPoint(currentPoint)
-            let shapeNode = SKShapeNode(rect: currentRect)
-            shapeNode.fillColor = .whiteColor()
-            shapeNode.strokeColor = .blackColor()
-            shapeNode.lineWidth = 2
-            self.addChild(shapeNode)
-        }
-        
-        scoreLabel = SKLabelNode(text: "Score: 0")
-        scoreLabel.fontColor = .whiteColor()
-        scoreLabel.fontSize = 32
-        scoreLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: gridLabelPositionForPoint(CGPoint(x: 0, y: gridSize)).y + 10)
-        self.addChild(scoreLabel)
-        
-        highScoreLabel = SKLabelNode(text: "High Score: \(HighScoreManager.currentHighScore())")
-        highScoreLabel.fontColor = .whiteColor()
-        highScoreLabel.fontSize = 32
-        let highScorePosition = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - 35)
-        highScoreLabel.position = highScorePosition
-        self.addChild(highScoreLabel)
-    }
-    
-    // Returns a CGPoint for a label in the grid given an input point.
-    // E.g. (0,0) returns -> TODODB:
-    func gridLabelPositionForPoint(point: CGPoint) -> CGPoint {
-        let gridElementRect = gridElementRectForPoint(point)
-        let centerPosition = CGPoint(x: CGRectGetMidX(gridElementRect), y: CGRectGetMidY(gridElementRect))
-        return centerPosition
-    }
-    
-    func gridElementRectForPoint(point: CGPoint) -> CGRect {
-        let x = gridStartX + (gridWidth * Int(point.x))
-        let y = gridStartY - (gridHeight * Int(point.y))
-        return CGRect(x: x, y: y, width: gridWidth, height: gridHeight)
-    }
 }
 
 //MARK: View Delegate Extension
 extension GameScene : GameViewDelegate {
     
-    func updateViewState(gameViewInfo: GameViewInfo) {
+    func updateViewState(_ gameViewInfo: GameViewInfo) {
         isAnimating = true
         
         self.gameViewInfo = gameViewInfo
@@ -137,24 +142,24 @@ extension GameScene : GameViewDelegate {
         })
     }
     
-    func moveLabel(transition: PositionTransition) {
+    func moveLabel(_ transition: PositionTransition) {
         guard let labelNode = labelArray[transition.start.x, transition.start.y] else {
             return
         }
         let endPosition = gridLabelPositionForPoint(CGPoint(x: transition.end.x, y: transition.end.y))
-        labelNode.runAction(SKAction.moveTo(endPosition, duration: tileTransitionDuration))
+        labelNode.run(SKAction.move(to: endPosition, duration: tileTransitionDuration))
     }
     
-    func updateScore(newScore: Int) {
+    func updateScore(_ newScore: Int) {
         scoreLabel.text = "Score: \(newScore)"
     }
 }
 
 //MARK: Static Label Extension
 extension GameScene {
-    func decorateLabel(label: SKLabelNode) {
+    func decorateLabel(_ label: SKLabelNode) {
         label.zPosition = 100
-        label.fontColor = .blackColor()
+        label.fontColor = .black()
         label.fontSize = 32
     }
     

@@ -26,7 +26,7 @@ public struct Position {
         return "x: \(x) y: \(y)"
     }
     
-    public func equals(right: Position) -> Bool {
+    public func equals(_ right: Position) -> Bool {
         return self == right
     }
 }

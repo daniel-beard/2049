@@ -12,7 +12,7 @@ protocol GameManagerProtocol : CustomStringConvertible {
     func setup()
     func restart()
     func isGameTerminated() -> Bool
-    func move(direction: Int)
+    func move(_ direction: Int)
     
     var grid: Grid { get }
 }
@@ -65,7 +65,7 @@ public class GameManager : GameManagerProtocol {
     
     // Move tiles on the grid in the specified direction
     // 0: up, 1: right, 2: down, 3: left
-    func move(direction: Int) {
+    func move(_ direction: Int) {
         
         // Store current state
         previousGameState = grid
@@ -185,7 +185,7 @@ internal extension GameManager {
     }
     
     // Move a tile and its representation
-    func moveTile(tile: Tile, toCell: Position) {
+    func moveTile(_ tile: Tile, toCell: Position) {
         grid.cells[tile.position.x, tile.position.y] = nil
         grid.cells[toCell.x, toCell.y] = tile
         tile.updatePosition(toCell)
@@ -194,7 +194,7 @@ internal extension GameManager {
     
     
     // Build a list of positions to traverse in the right order
-    func buildTraversals(vector: Vector) -> ([Int], [Int]) {
+    func buildTraversals(_ vector: Vector) -> ([Int], [Int]) {
         var traversalsX = [Int]()
         var traversalsY = [Int]()
         
@@ -204,13 +204,13 @@ internal extension GameManager {
         }
         
         // Always traverse from the farthest cell in the chosen direction
-        traversalsX = vector.x == 1 ? Array(traversalsX.reverse()) : traversalsX
-        traversalsY = vector.y == 1 ? Array(traversalsY.reverse()) : traversalsY
+        traversalsX = vector.x == 1 ? Array(traversalsX.reversed()) : traversalsX
+        traversalsY = vector.y == 1 ? Array(traversalsY.reversed()) : traversalsY
         
         return (traversalsX, traversalsY)
     }
     
-    func findFarthestPosition(cell: Position, vector: Vector) -> (farthest: Position, next: Position) {
+    func findFarthestPosition(_ cell: Position, vector: Vector) -> (farthest: Position, next: Position) {
         var currentCell = cell
         var previous: Position = Position(x: -1, y: -1)
         

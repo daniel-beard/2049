@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Tile {
+public final class Tile {
     
     var position: Position
     var value: Int
@@ -24,7 +24,7 @@ public class Tile {
         previousPosition = Position(position: position)
     }
     
-    public func updatePosition(position: Position) {
+    public func updatePosition(_ position: Position) {
         self.position.x = position.x
         self.position.y = position.y
     }

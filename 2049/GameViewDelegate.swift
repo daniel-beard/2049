@@ -9,7 +9,7 @@
 import Foundation
 
 protocol GameViewDelegate: class {
-    func updateViewState(gameViewInfo: GameViewInfo)
+    func updateViewState(_ gameViewInfo: GameViewInfo)
 }
 
 public class GameViewInfo {

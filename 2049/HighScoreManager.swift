@@ -12,15 +12,15 @@ class HighScoreManager {
     
     static let highScoreKey = "highscore"
     
-    class func updateHighScoreIfNeeded(newScore: Int) {
+    class func updateHighScoreIfNeeded(_ newScore: Int) {
         if (newScore > currentHighScore()) {
-            NSUserDefaults.standardUserDefaults().setInteger(newScore, forKey: highScoreKey)
-            NSUserDefaults.standardUserDefaults().synchronize()
+            UserDefaults.standard().set(newScore, forKey: highScoreKey)
+            UserDefaults.standard().synchronize()
         }
     }
 
     class func currentHighScore() -> Int {
-        return NSUserDefaults.standardUserDefaults().integerForKey(highScoreKey)
+        return UserDefaults.standard().integer(forKey: highScoreKey)
     }
     
 }
