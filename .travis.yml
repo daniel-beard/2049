@@ -1,5 +1,5 @@
+language: objective-c
 osx_image: xcode8
-xcode_project: 2049.xcodeproj
-xcode_scheme: 2049
-xcode_sdk: iphonesimulator
+script: 
+  - xcodebuild -project 2049.xcodeproj -scheme 2049 -sdk iphonesimulator
 
