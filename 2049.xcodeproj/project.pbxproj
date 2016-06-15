@@ -219,6 +219,8 @@
 				TargetAttributes = {
 					2453F7201A33E55F009FB91D = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = LVQK69R6RM;
+						DevelopmentTeamName = "Groupon, Inc.";
 						LastSwiftMigration = 0800;
 					};
 					2453F7391A33E560009FB91D = {
