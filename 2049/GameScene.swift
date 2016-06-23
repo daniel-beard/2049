@@ -68,7 +68,6 @@ class GameScene: SKScene {
     }
     
     // Returns a CGPoint for a label in the grid given an input point.
-    // E.g. (0,0) returns -> TODODB:
     func gridLabelPositionForPoint(_ point: CGPoint) -> CGPoint {
         let gridElementRect = gridElementRectForPoint(point)
         let centerPosition = CGPoint(x: gridElementRect.midX, y: gridElementRect.midY)
@@ -82,40 +81,13 @@ class GameScene: SKScene {
     }
 }
 
-//MARK: Movement commands
-extension GameScene {
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-        if isAnimating {
-            return
-        }
-
-        for touch in touches {
-            let location = touch.location(in: self)
-            let node = atPoint(location)
-            if let nodeName = node.name {
-                switch nodeName {
-                case "up":
-                    gameManager.move(0)
-                case "down":
-                    gameManager.move(2)
-                case "right":
-                    gameManager.move(1)
-                case "left":
-                    gameManager.move(3)
-                default:
-                    break
-                }
-            }
-        }
-    }
-}
-
 //MARK: View Delegate Extension
 extension GameScene : GameViewDelegate {
     
     func updateViewState(_ gameViewInfo: GameViewInfo) {
+
+        //TODO: Store and speed up animations if we are currently in progress?
+
         isAnimating = true
         
         self.gameViewInfo = gameViewInfo

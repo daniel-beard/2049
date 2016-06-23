@@ -19,12 +19,12 @@ protocol GameManagerProtocol : CustomStringConvertible {
 
 public class GameManager : GameManagerProtocol {
     
-    var size: Int = 0
-    var score: Int = 0
-    var over: Bool = false
-    var won: Bool = false
-    var keepPlaying: Bool = false
-    var grid: Grid = Grid(size: 0)
+    var size = 0
+    var score = 0
+    var over = false
+    var won = false
+    var keepPlaying = false
+    var grid = Grid(size: 0)
     let startTiles = 2
     
     // State transitions
@@ -66,7 +66,7 @@ public class GameManager : GameManagerProtocol {
     // Move tiles on the grid in the specified direction
     // 0: up, 1: right, 2: down, 3: left
     func move(_ direction: Int) {
-        
+
         // Store current state
         previousGameState = grid
         tileTransitions = [PositionTransition]()
