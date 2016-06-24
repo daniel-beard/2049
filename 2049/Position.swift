@@ -16,6 +16,10 @@ public struct Position {
         self.x = x
         self.y = y
     }
+
+    init(_ x: Int, _ y: Int) {
+        self.init(x: x, y: y)
+    }
     
     init(position: Position) {
         x = position.x

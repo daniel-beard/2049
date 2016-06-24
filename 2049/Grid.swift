@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Grid {
+public struct Grid: Sequence, IteratorProtocol {
     
     var cells: Array2DTyped<Tile?>
     var size:Int = 0
@@ -30,13 +30,8 @@ public struct Grid {
     
     public func availableCells() -> [Position] {
         var availableCells = [Position]()
-        
-        for x in 0..<cells.colCount() {
-            for y in 0..<cells.rowCount() {
-                if cells[x, y] == nil {
-                    availableCells.append(Position(x: x, y: y))
-                }
-            }
+        for (x, y) in self where cells[x, y] == nil {
+            availableCells.append(Position(x: x, y: y))
         }
         return availableCells
     }
@@ -73,14 +68,18 @@ public struct Grid {
         return position.x >= 0 && position.x < size &&
             position.y >= 0 && position.y < size;
     }
-    
-    public func gridIndexes() -> [(Int, Int)] {
-        var result = [(Int, Int)]()
-        for x in 0..<size {
-            for y in 0..<size {
-                result.append((x, y))
-            }
-        }
-        return result
+
+    //MARK: GeneratorType
+    var currentElement = 0
+    mutating public func next() -> (Int, Int)? {
+        let curItem = currentElement
+        currentElement += 1
+        return cells.twoDimensionalIndexFor(index: curItem)
+    }
+
+    //MARK: SequenceType
+    public typealias Iterator = Grid
+    public func makeIterator() -> Iterator {
+        return self
     }
 }

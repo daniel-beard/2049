@@ -27,6 +27,13 @@ class Array2DTyped<T> : Sequence, IteratorProtocol {
             matrix[cols * row + col] = newValue
         }
     }
+
+    func twoDimensionalIndexFor(index: Int) -> (Int, Int)? {
+        if index >= 0 && index < cols * rows {
+            return (index % cols, index / rows)
+        }
+        return nil
+    }
     
     func colCount() -> Int {
         return self.cols

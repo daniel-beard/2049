@@ -51,7 +51,7 @@ class GameScene: SKScene {
         titleLabel.position = CGPoint(x: self.frame.midX, y: self.frame.height - 100)
         self.addChild(titleLabel)
 
-        for (x, y) in gameManager.grid.gridIndexes() {
+        for (x, y) in gameManager.grid {
             // Setup grid squares
             let currentPoint = CGPoint(x: x, y: y)
             let currentRect = gridElementRectForPoint(currentPoint)
@@ -144,7 +144,7 @@ extension GameScene {
     }
     
     func updateLabels() {
-        for (x, y) in gameManager.grid.gridIndexes() {
+        for (x, y) in gameManager.grid {
             // If we have an existing label, remove it
             if let labelNode = labelArray[x, y] {
                 labelNode.removeFromParent()
