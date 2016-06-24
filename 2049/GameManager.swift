@@ -8,15 +8,18 @@
 
 import Foundation
 
+/// GameManagerProtocol
+/// - Used by this class and the DeterminateGameManager class (for testing / debugging).
 protocol GameManagerProtocol : CustomStringConvertible {
     func setup()
     func restart()
     func isGameTerminated() -> Bool
     func move(_ direction: Int)
-    
     var grid: Grid { get }
 }
 
+/// GameManager - This class holds all the game logic and can run headless, without UI.
+/// Takes inputs, changes state and calls delegate methods with updates, that's it.
 public class GameManager : GameManagerProtocol {
     
     var size = 0
@@ -85,7 +88,7 @@ public class GameManager : GameManagerProtocol {
         // Traverse the grid in the right direction and move tiles
         for x in traversalsX {
             for y in traversalsY {
-                let cell = Position(x: x, y: y)
+                let cell = Position(x, y)
                 
                 if let tile = grid.cellContent(cell) {
                     let (farthestPosition, nextPosition) = findFarthestPosition(cell, vector: vector)
@@ -156,7 +159,6 @@ public class GameManager : GameManagerProtocol {
             grid.insertTile(tile)
             
             tileTransitions.append(PositionTransition(start: tile.position, end: tile.position, type: .Added))
-            
             print("inserted random value: \(value) at position: \(tile.position.description())")
         }
     }
@@ -174,12 +176,10 @@ internal extension GameManager {
     
     // Save all tile positions and remove merger info
     func prepareTiles() {
-        for x in 0..<grid.size {
-            for y in 0..<grid.size {
-                if let tile = grid.cellContent(Position(x: x, y: y)) {
-                    tile.mergedFrom = nil
-                    tile.savePosition()
-                }
+        grid.forEach { (x, y) in
+            if let tile = grid.cellContent(Position(x, y)) {
+                tile.mergedFrom = nil
+                tile.savePosition()
             }
         }
     }
@@ -212,11 +212,11 @@ internal extension GameManager {
     
     func findFarthestPosition(_ cell: Position, vector: Vector) -> (farthest: Position, next: Position) {
         var currentCell = cell
-        var previous: Position = Position(x: -1, y: -1)
+        var previous: Position = Position(-1, -1)
         
         repeat {
             previous = currentCell
-            currentCell = Position(x: previous.x + vector.x, y: previous.y + vector.y)
+            currentCell = Position(previous.x + vector.x, previous.y + vector.y)
         } while (grid.withinBounds(currentCell) && grid.cellAvailable(currentCell))
         
         return (previous, currentCell)
@@ -228,15 +228,13 @@ internal extension GameManager {
     
     // Check for available matches between tiles (more expensive check)
     func tileMatchesAvailable() -> Bool {
-        for x in 0..<size {
-            for y in 0..<size {
-                if let tile = grid.cellContent(Position(x: x, y: y)) {
-                    for direction in 0..<4 {
-                        let vector = Vector.getVector(direction)
-                        let cell = Position(x: x + vector.x, y: y + vector.y)
-                        if let other = grid.cellContent(cell) where other.value == tile.value {
-                            return true
-                        }
+        for (x, y) in grid {
+            if let tile = grid.cellContent(Position(x, y)) {
+                for direction in 0..<4 {
+                    let vector = Vector.getVector(direction)
+                    let cell = Position(x + vector.x, y + vector.y)
+                    if let other = grid.cellContent(cell) where other.value == tile.value {
+                        return true
                     }
                 }
             }
@@ -259,7 +257,7 @@ extension GameManager : CustomStringConvertible {
         var result = "\n"
         for row in 0..<size {
             for column in 0..<size {
-                if let gridValue = grid.cellContent(Position(x: column, y: row)) {
+                if let gridValue = grid.cellContent(Position(column, row)) {
                     result = "\(result)\(gridValue.value) "
                 } else {
                     result = "\(result)0 "
