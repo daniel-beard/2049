@@ -31,6 +31,7 @@ class GameScene: SKScene {
     var isAnimating = false
     var scoreLabel: SKLabelNode!
     var highScoreLabel: SKLabelNode!
+    var titleLabel: SKLabelNode!
     
     override func didMove(to view: SKView) {
         
@@ -42,6 +43,14 @@ class GameScene: SKScene {
     }
     
     func setupGrid() {
+
+        titleLabel = SKLabelNode(text: "2049")
+        titleLabel.fontColor = .white()
+        titleLabel.fontSize = 60
+        titleLabel.fontName = "DamascusBold"
+        titleLabel.position = CGPoint(x: self.frame.midX, y: self.frame.height - 100)
+        self.addChild(titleLabel)
+
         for (x, y) in gameManager.grid.gridIndexes() {
             // Setup grid squares
             let currentPoint = CGPoint(x: x, y: y)
@@ -62,13 +71,11 @@ class GameScene: SKScene {
         highScoreLabel = SKLabelNode(text: "High Score: \(HighScoreManager.currentHighScore())")
         highScoreLabel.fontColor = .white()
         highScoreLabel.fontSize = 32
-        let highScorePosition = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - 35)
-        highScoreLabel.position = highScorePosition
+        highScoreLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - 35)
         self.addChild(highScoreLabel)
     }
     
     // Returns a CGPoint for a label in the grid given an input point.
-    // E.g. (0,0) returns -> TODODB:
     func gridLabelPositionForPoint(_ point: CGPoint) -> CGPoint {
         let gridElementRect = gridElementRectForPoint(point)
         let centerPosition = CGPoint(x: gridElementRect.midX, y: gridElementRect.midY)
@@ -82,40 +89,13 @@ class GameScene: SKScene {
     }
 }
 
-//MARK: Movement commands
-extension GameScene {
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-        if isAnimating {
-            return
-        }
-
-        for touch in touches {
-            let location = touch.location(in: self)
-            let node = atPoint(location)
-            if let nodeName = node.name {
-                switch nodeName {
-                case "up":
-                    gameManager.move(0)
-                case "down":
-                    gameManager.move(2)
-                case "right":
-                    gameManager.move(1)
-                case "left":
-                    gameManager.move(3)
-                default:
-                    break
-                }
-            }
-        }
-    }
-}
-
 //MARK: View Delegate Extension
 extension GameScene : GameViewDelegate {
     
     func updateViewState(_ gameViewInfo: GameViewInfo) {
+
+        //TODO: Store and speed up animations if we are currently in progress?
+
         isAnimating = true
         
         self.gameViewInfo = gameViewInfo

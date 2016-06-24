@@ -48,6 +48,8 @@ class GameViewController: UIViewController {
 
             self.scene = scene
         }
+
+        setupSwipeHandlers()
     }
 
     override func shouldAutorotate() -> Bool {
@@ -55,11 +57,7 @@ class GameViewController: UIViewController {
     }
 
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        if UIDevice.current().userInterfaceIdiom == .phone {
-            return UIInterfaceOrientationMask.allButUpsideDown
-        } else {
-            return UIInterfaceOrientationMask.all
-        }
+        return UIDevice.current().userInterfaceIdiom == .phone ? .allButUpsideDown : .all
     }
 
     override func prefersStatusBarHidden() -> Bool {
@@ -75,25 +73,27 @@ extension GameViewController {
 
     override var keyCommands: [UIKeyCommand]? {
         return [
-            UIKeyCommand(input: UIKeyInputUpArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
-            UIKeyCommand(input: UIKeyInputDownArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
-            UIKeyCommand(input: UIKeyInputLeftArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
-            UIKeyCommand(input: UIKeyInputRightArrow, modifierFlags: [], action: #selector(self.handleKeyCommand(_:))),
+            UIKeyCommand(input: UIKeyInputUpArrow,      modifierFlags: [], action: #selector(swipeUp)),
+            UIKeyCommand(input: UIKeyInputDownArrow,    modifierFlags: [], action: #selector(swipeDown)),
+            UIKeyCommand(input: UIKeyInputLeftArrow,    modifierFlags: [], action: #selector(swipeLeft)),
+            UIKeyCommand(input: UIKeyInputRightArrow,   modifierFlags: [], action: #selector(swipeRight)),
         ]
     }
 
-    func handleKeyCommand(_ keyCommand: UIKeyCommand) {
-        switch keyCommand.input {
-        case UIKeyInputUpArrow:
-            scene?.gameManager.move(0)
-        case UIKeyInputDownArrow:
-            scene?.gameManager.move(2)
-        case UIKeyInputRightArrow:
-            scene?.gameManager.move(1)
-        case UIKeyInputLeftArrow:
-            scene?.gameManager.move(3)
-        default:
-            break
-        }
+    func setupSwipeHandlers() {
+        let leftSwipe   = UISwipeGestureRecognizer(target: self, action: #selector(swipeLeft))  
+        let rightSwipe  = UISwipeGestureRecognizer(target: self, action: #selector(swipeRight)) 
+        let upSwipe     = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp))
+        let downSwipe   = UISwipeGestureRecognizer(target: self, action: #selector(swipeDown))
+        leftSwipe.direction     = .left
+        rightSwipe.direction    = .right
+        upSwipe.direction       = .up
+        downSwipe.direction     = .down
+        self.view.gestureRecognizers = [leftSwipe, rightSwipe, upSwipe, downSwipe]
     }
+
+    func swipeLeft()    { scene?.gameManager.move(3) }
+    func swipeRight()   { scene?.gameManager.move(1) }
+    func swipeUp()      { scene?.gameManager.move(0) }
+    func swipeDown()    { scene?.gameManager.move(2) }
 }
