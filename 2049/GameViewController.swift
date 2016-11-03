@@ -11,8 +11,8 @@ import SpriteKit
 
 extension SKNode {
     class func unarchiveFromFile(_ file : NSString) -> SKNode? {
-        if let path = Bundle.main().pathForResource(file as String, ofType: "sks") {
-            let sceneData = try! Data(contentsOf: URL(fileURLWithPath: path), options: .dataReadingMappedIfSafe)
+        if let path = Bundle.main.path(forResource: file as String, ofType: "sks") {
+            let sceneData = try! Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
             let archiver = NSKeyedUnarchiver(forReadingWith: sceneData)
             
             archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
@@ -52,22 +52,22 @@ class GameViewController: UIViewController {
         setupSwipeHandlers()
     }
 
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate: Bool {
         return true
     }
-
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return UIDevice.current().userInterfaceIdiom == .phone ? .allButUpsideDown : .all
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return UIDevice.current.userInterfaceIdiom == .phone ? .allButUpsideDown : .all
     }
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden: Bool {
         return true
     }
 }
 
 //MARK: Keyboard shortcuts
 extension GameViewController {
-    override func canBecomeFirstResponder() -> Bool {
+    override var canBecomeFirstResponder: Bool {
         return true
     }
 

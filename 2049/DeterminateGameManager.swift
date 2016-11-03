@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class DeterminateGameManager : GameManager {
+open class DeterminateGameManager : GameManager {
     
     var nonRandomTiles = [Tile]()
     

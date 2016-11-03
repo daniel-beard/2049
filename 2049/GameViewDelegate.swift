@@ -12,7 +12,7 @@ protocol GameViewDelegate: class {
     func updateViewState(_ gameViewInfo: GameViewInfo)
 }
 
-public class GameViewInfo {
+open class GameViewInfo {
     var grid: Grid
     var score: Int
     var won: Bool
