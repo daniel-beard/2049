@@ -28,7 +28,7 @@ class Array2DTyped<T> : Sequence, IteratorProtocol {
         }
     }
 
-    func twoDimensionalIndexFor(index: Int) -> (Int, Int)? {
+    func twoDimensionalIndexFor(_ index: Int) -> (Int, Int)? {
         if index >= 0 && index < cols * rows {
             return (index % cols, index / rows)
         }

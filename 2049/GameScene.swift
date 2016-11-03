@@ -8,9 +8,9 @@
 
 import SpriteKit
 
-func afterDelay(_ delay: TimeInterval, performBlock block:() -> Void) {
+func afterDelay(_ delay: TimeInterval, performBlock block:@escaping () -> Void) {
     let dispatchTime = DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-    DispatchQueue.main.after(when: dispatchTime, execute: block)
+    DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: block)
 }
 
 class GameScene: SKScene {
@@ -45,7 +45,7 @@ class GameScene: SKScene {
     func setupGrid() {
 
         titleLabel = SKLabelNode(text: "2049")
-        titleLabel.fontColor = .white()
+        titleLabel.fontColor = .white
         titleLabel.fontSize = 60
         titleLabel.fontName = "DamascusBold"
         titleLabel.position = CGPoint(x: self.frame.midX, y: self.frame.height - 100)
@@ -56,20 +56,20 @@ class GameScene: SKScene {
             let currentPoint = CGPoint(x: x, y: y)
             let currentRect = gridElementRectForPoint(currentPoint)
             let shapeNode = SKShapeNode(rect: currentRect)
-            shapeNode.fillColor = .white()
-            shapeNode.strokeColor = .black()
+            shapeNode.fillColor = .white
+            shapeNode.strokeColor = .black
             shapeNode.lineWidth = 2
             self.addChild(shapeNode)
         }
         
         scoreLabel = SKLabelNode(text: "Score: 0")
-        scoreLabel.fontColor = .white()
+        scoreLabel.fontColor = .white
         scoreLabel.fontSize = 32
         scoreLabel.position = CGPoint(x: self.frame.midX, y: gridLabelPositionForPoint(CGPoint(x: 0, y: gridSize)).y + 10)
         self.addChild(scoreLabel)
         
         highScoreLabel = SKLabelNode(text: "High Score: \(HighScoreManager.currentHighScore())")
-        highScoreLabel.fontColor = .white()
+        highScoreLabel.fontColor = .white
         highScoreLabel.fontSize = 32
         highScoreLabel.position = CGPoint(x: scoreLabel.position.x, y: scoreLabel.position.y - 35)
         self.addChild(highScoreLabel)
@@ -139,7 +139,7 @@ extension GameScene : GameViewDelegate {
 extension GameScene {
     func decorateLabel(_ label: SKLabelNode) {
         label.zPosition = 100
-        label.fontColor = .black()
+        label.fontColor = .black
         label.fontSize = 32
     }
     

@@ -74,7 +74,7 @@ public struct Grid: Sequence, IteratorProtocol {
     mutating public func next() -> (Int, Int)? {
         let curItem = currentElement
         currentElement += 1
-        return cells.twoDimensionalIndexFor(index: curItem)
+        return cells.twoDimensionalIndexFor(curItem)
     }
 
     //MARK: SequenceType

@@ -14,13 +14,13 @@ class HighScoreManager {
     
     class func updateHighScoreIfNeeded(_ newScore: Int) {
         if (newScore > currentHighScore()) {
-            UserDefaults.standard().set(newScore, forKey: highScoreKey)
-            UserDefaults.standard().synchronize()
+            UserDefaults.standard.set(newScore, forKey: highScoreKey)
+            UserDefaults.standard.synchronize()
         }
     }
 
     class func currentHighScore() -> Int {
-        return UserDefaults.standard().integer(forKey: highScoreKey)
+        return UserDefaults.standard.integer(forKey: highScoreKey)
     }
     
 }

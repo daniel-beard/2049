@@ -20,7 +20,7 @@ protocol GameManagerProtocol : CustomStringConvertible {
 
 /// GameManager - This class holds all the game logic and can run headless, without UI.
 /// Takes inputs, changes state and calls delegate methods with updates, that's it.
-public class GameManager : GameManagerProtocol {
+open class GameManager : GameManagerProtocol {
     
     var size = 0
     var score = 0
@@ -45,16 +45,16 @@ public class GameManager : GameManagerProtocol {
         grid = Grid(size: size)
     }
     
-    public func restart() {
+    open func restart() {
         setup()
     }
     
     // Return true if the game is lost, or has won and the user hasn't kept playing
-    public func isGameTerminated() -> Bool {
+    open func isGameTerminated() -> Bool {
         return over || (won && !keepPlaying)
     }
     
-    public func setup() {
+    open func setup() {
         grid = Grid(size: size)
         score = 0
         over = false
@@ -233,7 +233,7 @@ internal extension GameManager {
                 for direction in 0..<4 {
                     let vector = Vector.getVector(direction)
                     let cell = Position(x + vector.x, y + vector.y)
-                    if let other = grid.cellContent(cell) where other.value == tile.value {
+                    if let other = grid.cellContent(cell) , other.value == tile.value {
                         return true
                     }
                 }
