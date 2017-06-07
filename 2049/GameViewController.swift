@@ -92,8 +92,8 @@ extension GameViewController {
         self.view.gestureRecognizers = [leftSwipe, rightSwipe, upSwipe, downSwipe]
     }
 
-    func swipeLeft()    { scene?.gameManager.move(3) }
-    func swipeRight()   { scene?.gameManager.move(1) }
-    func swipeUp()      { scene?.gameManager.move(0) }
-    func swipeDown()    { scene?.gameManager.move(2) }
+    @objc func swipeLeft()    { scene?.gameManager.move(3) }
+    @objc func swipeRight()   { scene?.gameManager.move(1) }
+    @objc func swipeUp()      { scene?.gameManager.move(0) }
+    @objc func swipeDown()    { scene?.gameManager.move(2) }
 }

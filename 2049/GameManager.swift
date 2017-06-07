@@ -176,7 +176,9 @@ internal extension GameManager {
     
     // Save all tile positions and remove merger info
     func prepareTiles() {
-        grid.forEach { (x, y) in
+        grid.forEach { (arg) in
+            
+            let (x, y) = arg
             if let tile = grid.cellContent(Position(x, y)) {
                 tile.mergedFrom = nil
                 tile.savePosition()
