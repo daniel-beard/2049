@@ -18,7 +18,7 @@ open class Vector {
     }
     
     open class func getVector(_ direction: Int) -> Vector {
-        var map: [Int: Vector] = [
+        let map: [Int: Vector] = [
             0: Vector(x: 0, y: -1), // Up
             1: Vector(x: 1, y: 0),  // Right
             2: Vector(x: 0, y: 1),  // Down

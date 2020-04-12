@@ -73,10 +73,10 @@ extension GameViewController {
 
     override var keyCommands: [UIKeyCommand]? {
         return [
-            UIKeyCommand(input: UIKeyInputUpArrow,      modifierFlags: [], action: #selector(swipeUp)),
-            UIKeyCommand(input: UIKeyInputDownArrow,    modifierFlags: [], action: #selector(swipeDown)),
-            UIKeyCommand(input: UIKeyInputLeftArrow,    modifierFlags: [], action: #selector(swipeLeft)),
-            UIKeyCommand(input: UIKeyInputRightArrow,   modifierFlags: [], action: #selector(swipeRight)),
+            UIKeyCommand(input: UIKeyCommand.inputUpArrow,      modifierFlags: [], action: #selector(swipeUp)),
+            UIKeyCommand(input: UIKeyCommand.inputDownArrow,    modifierFlags: [], action: #selector(swipeDown)),
+            UIKeyCommand(input: UIKeyCommand.inputLeftArrow,    modifierFlags: [], action: #selector(swipeLeft)),
+            UIKeyCommand(input: UIKeyCommand.inputRightArrow,   modifierFlags: [], action: #selector(swipeRight)),
         ]
     }
 

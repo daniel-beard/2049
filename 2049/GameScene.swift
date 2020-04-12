@@ -13,6 +13,30 @@ func afterDelay(_ delay: TimeInterval, performBlock block:@escaping () -> Void) 
     DispatchQueue.main.asyncAfter(deadline: dispatchTime, execute: block)
 }
 
+class SKNumberNode: SKShapeNode {
+    var labelNode: SKLabelNode!
+
+    init(rectOfSize: CGSize, text: String) {
+        
+        super.init()
+        let rect = CGRect(origin: .zero, size: rectOfSize).insetBy(dx: 20, dy: 20)
+        self.path = CGPath(roundedRect: rect, cornerWidth: 5, cornerHeight: 5, transform: nil)
+        self.fillColor = .gray
+
+        labelNode = SKLabelNode(text: text)
+        addChild(labelNode)
+        labelNode.zPosition = 100
+        labelNode.fontColor = .white
+        labelNode.fontSize = 32
+        labelNode.position = CGPoint(x: (rect.size.width / 2) + (labelNode.frame.size.width),
+                                     y: (rect.size.height / 2) + (labelNode.frame.size.height / 2))
+    }
+
+    required init(coder: NSCoder) {
+        fatalError("Not implemented")
+    }
+}
+
 class GameScene: SKScene {
     
     // Constants
@@ -21,13 +45,13 @@ class GameScene: SKScene {
     let gridWidth = 100
     let gridHeight = 100
     let gridSize = 4
-    let tileTransitionDuration = 0.5
-    let updateDuration = 0.51
+    let tileTransitionDuration = 0.2
+    let updateDuration = 0.2
     
     // Variables
     var gameManager: GameManagerProtocol!
     var gameViewInfo: GameViewInfo?
-    var labelArray: Array2DTyped<SKLabelNode?>!
+    var labelArray: Array2DTyped<SKNumberNode?>!
     var isAnimating = false
     var scoreLabel: SKLabelNode!
     var highScoreLabel: SKLabelNode!
@@ -94,6 +118,8 @@ extension GameScene : GameViewDelegate {
     
     func updateViewState(_ gameViewInfo: GameViewInfo) {
 
+        guard isAnimating == false else { return }
+
         //TODO: Store and speed up animations if we are currently in progress?
 
         isAnimating = true
@@ -121,12 +147,19 @@ extension GameScene : GameViewDelegate {
             self.updateScore(self.gameViewInfo?.score ?? 0)
         })
     }
-    
+
+    //TODO: Fix, this doesn't animate smoothly, jumps a little bit. Need to center the end point in the grid position.
     func moveLabel(_ transition: PositionTransition) {
         guard let labelNode = labelArray[transition.start.x, transition.start.y] else {
             return
         }
-        let endPosition = gridLabelPositionForPoint(CGPoint(x: transition.end.x, y: transition.end.y))
+        var endPosition = gridLabelPositionForPoint(CGPoint(x: transition.end.x,
+                                                            y: transition.end.y))
+
+        //TODO: This isn't quite right.
+        endPosition.x -= (labelNode.frame.size.width / 2)
+        endPosition.y -= (labelNode.frame.size.height)
+
         labelNode.run(SKAction.move(to: endPosition, duration: tileTransitionDuration))
     }
     
@@ -137,12 +170,8 @@ extension GameScene : GameViewDelegate {
 
 //MARK: Static Label Extension
 extension GameScene {
-    func decorateLabel(_ label: SKLabelNode) {
-        label.zPosition = 100
-        label.fontColor = .black
-        label.fontSize = 32
-    }
-    
+
+    //TODO: Rename this and `labelArray` to numberNodes, or something similar.
     func updateLabels() {
         for (x, y) in gameManager.grid {
             // If we have an existing label, remove it
@@ -153,11 +182,13 @@ extension GameScene {
             
             // If we have content, add a new label
             if let content = gameViewInfo?.grid.cellContent(Position(x: x, y: y)) {
-                let labelNode = SKLabelNode(text: "\(content.value)")
-                labelNode.position = gridLabelPositionForPoint(CGPoint(x: x, y: y))
-                decorateLabel(labelNode)
-                labelArray[x, y] = labelNode
-                self.addChild(labelNode)
+                let gridRect = gridElementRectForPoint(CGPoint(x: x, y: y))
+
+                let numberNode = SKNumberNode(rectOfSize: gridRect.size, text: "\(content.value)")
+                numberNode.position = gridRect.origin
+
+                labelArray[x, y] = numberNode
+                self.addChild(numberNode)
             }
         }
     }

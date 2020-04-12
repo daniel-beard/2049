@@ -20,7 +20,7 @@ public struct Grid: Sequence, IteratorProtocol {
     
     // Find the first available random position
     public func randomAvailableCell() -> Position? {
-        var cellsAvailable = availableCells()
+        let cellsAvailable = availableCells()
         if cellsAvailable.count > 0 {
             let randomIndex: Int = Int(arc4random_uniform(UInt32(cellsAvailable.count)))
             return cellsAvailable[randomIndex]
