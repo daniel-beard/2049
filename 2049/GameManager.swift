@@ -20,6 +20,7 @@ protocol GameManagerProtocol : CustomStringConvertible {
 
 /// GameManager - This class holds all the game logic and can run headless, without UI.
 /// Takes inputs, changes state and calls delegate methods with updates, that's it.
+//TODO: Make this class serializable to/from user defaults.
 open class GameManager : GameManagerProtocol {
     
     var size = 0
@@ -69,6 +70,8 @@ open class GameManager : GameManagerProtocol {
     // Move tiles on the grid in the specified direction
     // 0: up, 1: right, 2: down, 3: left
     func move(_ direction: Int) {
+
+        defer { updateViewState() }
 
         // Store current state
         previousGameState = grid
@@ -135,7 +138,6 @@ open class GameManager : GameManagerProtocol {
                 }
             }
         }
-        
         if moved {
             addRandomTile()
         }
@@ -143,9 +145,6 @@ open class GameManager : GameManagerProtocol {
         if !movesAvailable() {
             over = true // Game over!
         }
-        
-        print("After Move: \(description)")
-        updateViewState()
     }
     
     
@@ -157,9 +156,7 @@ open class GameManager : GameManagerProtocol {
             let value = arc4random_uniform(10) < 9 ? 2 : 4;
             let tile = Tile(position: grid.randomAvailableCell()!, value: value)
             grid.insertTile(tile)
-            
             tileTransitions.append(PositionTransition(start: tile.position, end: tile.position, type: .Added))
-            print("inserted random value: \(value) at position: \(tile.position.description())")
         }
     }
 
@@ -177,7 +174,6 @@ internal extension GameManager {
     // Save all tile positions and remove merger info
     func prepareTiles() {
         grid.forEach { (arg) in
-            
             let (x, y) = arg
             if let tile = grid.cellContent(Position(x, y)) {
                 tile.mergedFrom = nil
@@ -246,7 +242,6 @@ internal extension GameManager {
     
     //MARK: View Delegate
     func updateViewState() {
-        //TODO: Update best score
         let gameViewInfo = GameViewInfo(grid: grid, score: score, won: won, terminated: isGameTerminated(), transitions: tileTransitions)
         viewDelegate?.updateViewState(gameViewInfo)
     }

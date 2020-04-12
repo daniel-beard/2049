@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 public struct Position {
     var x = 0
@@ -27,11 +28,15 @@ public struct Position {
     }
     
     public func description() -> String {
-        return "x: \(x) y: \(y)"
+        "x: \(x) y: \(y)"
     }
     
     public func equals(_ right: Position) -> Bool {
-        return self == right
+        self == right
+    }
+
+    public func asPoint() -> CGPoint {
+        return CGPoint(x: x, y: y)
     }
 }
 
