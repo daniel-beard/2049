@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Grid: Sequence, IteratorProtocol {
+public struct Grid: Sequence, IteratorProtocol, Codable {
     
     var cells: Array2DTyped<Tile?>
     var size:Int = 0

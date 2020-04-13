@@ -21,7 +21,7 @@ protocol GameManagerProtocol : CustomStringConvertible {
 /// GameManager - This class holds all the game logic and can run headless, without UI.
 /// Takes inputs, changes state and calls delegate methods with updates, that's it.
 //TODO: Make this class serializable to/from user defaults.
-open class GameManager : GameManagerProtocol {
+final class GameManager : GameManagerProtocol, Codable {
     
     var size = 0
     var score = 0
@@ -34,6 +34,11 @@ open class GameManager : GameManagerProtocol {
     // State transitions
     var previousGameState = Grid(size: 0)
     var tileTransitions = [PositionTransition]()
+
+    // Everything except the viewDelegate, we'll set that after decoding.
+    private enum CodingKeys: String, CodingKey {
+        case size, score, over, won, keepPlaying, grid, startTiles, previousGameState, tileTransitions
+    }
     
     // View delegate
     weak var viewDelegate: GameViewDelegate?
@@ -45,17 +50,21 @@ open class GameManager : GameManagerProtocol {
         self.viewDelegate = viewDelegate
         grid = Grid(size: size)
     }
-    
-    open func restart() {
+
+    func restart() {
         setup()
+    }
+
+    func startFromRestoredState() {
+        updateViewState()
     }
     
     // Return true if the game is lost, or has won and the user hasn't kept playing
-    open func isGameTerminated() -> Bool {
+    func isGameTerminated() -> Bool {
         return over || (won && !keepPlaying)
     }
     
-    open func setup() {
+    func setup() {
         grid = Grid(size: size)
         score = 0
         over = false

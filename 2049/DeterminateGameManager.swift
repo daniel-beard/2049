@@ -8,7 +8,9 @@
 
 import Foundation
 
-open class DeterminateGameManager : GameManager {
+// Not supported right now. Need to make the GameManagerProtocol complete.
+/*
+final class DeterminateGameManager : GameManager {
     
     var nonRandomTiles = [Tile]()
     
@@ -22,6 +24,10 @@ open class DeterminateGameManager : GameManager {
             Tile(position: Position(x: 3, y: 0), value: 2)
         ]
     }
+
+    public required init(from decoder: Decoder) throws {
+        fatalError("Not implemented")
+    }
     
     override func addRandomTile() {
         if nonRandomTiles.count > 0 {
@@ -32,3 +38,4 @@ open class DeterminateGameManager : GameManager {
         }
     }
 }
+ */

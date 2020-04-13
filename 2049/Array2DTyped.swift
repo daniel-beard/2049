@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Array2DTyped<T> : Sequence, IteratorProtocol {
+class Array2DTyped<T: Codable> : Sequence, IteratorProtocol, Codable {
     
     var cols:Int, rows:Int
     var matrix:[T]

@@ -37,39 +37,24 @@ class GameViewController: UIViewController {
             let skView = self.view as! SKView
             skView.showsFPS = true
             skView.showsNodeCount = true
-            
-            /* Sprite Kit applies additional optimizations to improve rendering performance */
             skView.ignoresSiblingOrder = true
             
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .aspectFill
-            
             skView.presentScene(scene)
-
             self.scene = scene
         }
-
         setupSwipeHandlers()
     }
 
-    override var shouldAutorotate: Bool {
-        return true
-    }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return UIDevice.current.userInterfaceIdiom == .phone ? .allButUpsideDown : .all
-    }
-
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
+    override var shouldAutorotate: Bool { true }
+    override var prefersStatusBarHidden: Bool { true }
+    override var canBecomeFirstResponder: Bool { true }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .all }
 }
 
 //MARK: Keyboard shortcuts
 extension GameViewController {
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
 
     override var keyCommands: [UIKeyCommand]? {
         return [

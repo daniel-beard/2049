@@ -14,7 +14,7 @@ func afterDelay(_ delay: TimeInterval, performBlock block:@escaping () -> Void) 
 }
 
 // The number tile, with a rounded rect around it
-final class SKNumberNode: SKShapeNode {
+final class SKNumberNode: SKShapeNode, Codable {
     var labelNode: SKLabelNode!
 
     init(rectOfSize: CGSize, text: String) {
@@ -37,6 +37,10 @@ final class SKNumberNode: SKShapeNode {
         }
 
     }
+
+    // Dummy Codable conformance, we just want to use this in an Array2DTyped.
+    private var _dummy: String = ""
+    private enum CodingKeys: String, CodingKey { case _dummy }
 
     required init(coder: NSCoder) {
         fatalError("Not implemented")
@@ -73,7 +77,7 @@ class GameScene: SKScene {
     let updateDuration = 0.2
     
     // Variables
-    var gameManager: GameManagerProtocol!
+    var gameManager: GameManager!
     var gameViewInfo: GameViewInfo?
     var numberTiles: Array2DTyped<SKNumberNode?>!
     var isAnimating = false
@@ -83,11 +87,17 @@ class GameScene: SKScene {
     var resetLabel: SKLabelNode!
     
     override func didMove(to view: SKView) {
-        
         numberTiles = Array2DTyped(cols: gridSize, rows: gridSize, defaultValue: nil)
-        gameManager = GameManager(size: gridSize, viewDelegate: self)
-        setupGrid()
-        gameManager.restart()
+        if let savedGameState = Persistence.savedGameState() {
+            gameManager = savedGameState
+            gameManager.viewDelegate = self
+            setupGrid()
+            gameManager.startFromRestoredState()
+        } else {
+            gameManager = GameManager(size: gridSize, viewDelegate: self)
+            setupGrid()
+            gameManager.restart()
+        }
     }
     
     func setupGrid() {
@@ -117,7 +127,7 @@ class GameScene: SKScene {
         scoreLabel.position = CGPoint(x: self.frame.midX, y: gridLabelPositionForPoint(CGPoint(x: 0, y: gridSize)).y + 10)
         addChild(scoreLabel)
         
-        highScoreLabel = SKLabelNode(text: "High Score: \(HighScoreManager.currentHighScore())")
+        highScoreLabel = SKLabelNode(text: "High Score: \(Persistence.currentHighScore())")
         highScoreLabel.fontColor = .white
         highScoreLabel.fontSize = 32
         highScoreLabel.fontName = "DamascusRegular"
@@ -171,10 +181,8 @@ extension GameScene : GameViewDelegate {
         
         self.gameViewInfo = gameViewInfo
         
-        // Update high score
+        // Game ended
         if self.gameViewInfo?.terminated ?? false {
-            HighScoreManager.updateHighScoreIfNeeded(self.gameViewInfo?.score ?? 0)
-            
             //TODODB: Create restart game overlay here...
         }
         
@@ -200,9 +208,12 @@ extension GameScene : GameViewDelegate {
     }
     
     func updateScore(_ newScore: Int) {
+        // Save game & highscore
+        Persistence.writeGameState(state: gameManager)
+        Persistence.updateHighScoreIfNeeded(gameManager.score)
+        // Update labels
         scoreLabel.text = "Score: \(newScore)"
-
-        // TODO: Store game state here.
+        highScoreLabel.text = "High Score: \(Persistence.currentHighScore())"
     }
 }
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class Vector {
+final class Vector {
     var x = 0
     var y = 0
     
@@ -17,7 +17,7 @@ open class Vector {
         self.y = y
     }
     
-    open class func getVector(_ direction: Int) -> Vector {
+    class func getVector(_ direction: Int) -> Vector {
         let map: [Int: Vector] = [
             0: Vector(x: 0, y: -1), // Up
             1: Vector(x: 1, y: 0),  // Right

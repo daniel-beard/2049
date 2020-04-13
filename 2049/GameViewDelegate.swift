@@ -8,10 +8,12 @@
 
 import Foundation
 
+/// Protocol for communication from GameManager -> View
 protocol GameViewDelegate: class {
     func updateViewState(_ gameViewInfo: GameViewInfo)
 }
 
+/// State to send from GameManger -> View
 open class GameViewInfo {
     var grid: Grid
     var score: Int

@@ -9,7 +9,7 @@
 import Foundation
 import CoreGraphics
 
-public struct Position {
+public struct Position: Codable {
     var x = 0
     var y = 0
     
@@ -45,14 +45,14 @@ func == (left: Position, right: Position) -> Bool {
     return left.x == right.x && left.y == right.y
 }
 
-public enum TransitionType: String {
+public enum TransitionType: String, Codable {
     case Unknown = "Unknown"
     case Moved = "Moved"
     case Added = "Added"
     case Removed = "Removed"
 }
 
-public struct PositionTransition : CustomStringConvertible, CustomDebugStringConvertible, Equatable {
+public struct PositionTransition : CustomStringConvertible, CustomDebugStringConvertible, Equatable, Codable {
     let start: Position
     let end: Position
     let type: TransitionType

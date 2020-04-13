@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class Tile {
+public final class Tile: Codable {
     
     var position: Position
     var value: Int
@@ -18,6 +18,10 @@ public final class Tile {
     init(position: Position, value: Int) {
         self.position = position
         self.value = value
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case position, value, previousPosition
     }
     
     public func savePosition() {
